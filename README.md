@@ -1,11 +1,11 @@
 # Open-Access PDF Retrieval System
 
-![Last Commit](https://img.shields.io/github/last-commit/Zosick/LitNexus?style=flat-square)
-![Forks](https://img.shields.io/github/forks/Zosick/LitNexus?style=flat-square)
-![Issues](https://img.shields.io/github/issues/Zosick/LitNexus?style=flat-square)
-![Contributors](https://img.shields.io/github/contributors/Zosick/LitNexus?style=flat-square)
-![Stars](https://img.shields.io/github/stars/Zosick/LitNexus?style=flat-square)
-![License](https://img.shields.io/github/license/Zosick/LitNexus?style=flat-square)
+![Last Commit](https://img.shields.io/github/last-commit/dmcalungsod/LitNexus?style=flat-square)
+![Forks](https://img.shields.io/github/forks/dmcalungsod/LitNexus?style=flat-square)
+![Issues](https://img.shields.io/github/issues/dmcalungsod/LitNexus?style=flat-square)
+![Contributors](https://img.shields.io/github/contributors/dmcalungsod/LitNexus?style=flat-square)
+![Stars](https://img.shields.io/github/stars/dmcalungsod/LitNexus?style=flat-square)
+![License](https://img.shields.io/github/license/dmcalungsod/LitNexus?style=flat-square)
 
 A modern graphical user interface (GUI) application designed to efficiently download open-access PDF articles using their Digital Object Identifiers (DOIs). The system features a robust, multi-source retrieval pipeline and supports a wide range of academic citation file formats.
 
@@ -53,7 +53,7 @@ To get started, clone the repository and install the required Python packages.
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/Zosick/LitNexus.git
+    git clone https://github.com/dmcalungsod/LitNexus.git
     cd LitNexus
     ```
 
