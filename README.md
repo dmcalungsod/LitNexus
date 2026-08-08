@@ -1,16 +1,14 @@
-# Open-Access PDF Retrieval System
+# LitNexus
 
-![Last Commit](https://img.shields.io/github/last-commit/dmcalungsod/LitNexus?style=flat-square)
-![Forks](https://img.shields.io/github/forks/dmcalungsod/LitNexus?style=flat-square)
-![Issues](https://img.shields.io/github/issues/dmcalungsod/LitNexus?style=flat-square)
-![Contributors](https://img.shields.io/github/contributors/dmcalungsod/LitNexus?style=flat-square)
-![Stars](https://img.shields.io/github/stars/dmcalungsod/LitNexus?style=flat-square)
-![License](https://img.shields.io/github/license/dmcalungsod/LitNexus?style=flat-square)
+![Last Commit](https://img.shields.io/github/last-commit/dmcalungsod/LitNexus?style=flat-square&cache=none)
+![Forks](https://img.shields.io/github/forks/dmcalungsod/LitNexus?style=flat-square&cache=none)
+![Issues](https://img.shields.io/github/issues/dmcalungsod/LitNexus?style=flat-square&cache=none)
+![Contributors](https://img.shields.io/github/contributors/dmcalungsod/LitNexus?style=flat-square&cache=none)
+![Stars](https://img.shields.io/github/stars/dmcalungsod/LitNexus?style=flat-square&cache=none)
+![License](https://img.shields.io/github/license/dmcalungsod/LitNexus?style=flat-square&cache=none)
+![Open Source](https://img.shields.io/badge/Open%20Source-%E2%9D%A4-green?style=flat-square)
 
-A modern graphical user interface (GUI) application designed to efficiently download open-access PDF articles using their Digital Object Identifiers (DOIs). The system features a robust, multi-source retrieval pipeline and supports a wide range of academic citation file formats.
-
-> [!NOTE]
-> **Migration to PySide6**: This project has completely transitioned from a command-line interface to a robust PySide6 GUI workspace.
+A modern, open-source graphical user interface (GUI) application designed to efficiently download open-access PDF articles using their Digital Object Identifiers (DOIs). The system features a robust, multi-source retrieval pipeline and supports a wide range of academic citation file formats.
 
 > [!WARNING]
 > **Development Status**: This application is currently under active development and is not yet production-ready. The system's behavior may be unstable or incomplete, and users may encounter unexpected errors, unhandled exceptions, and numerous known or potentially unknown bugs during operation.
@@ -149,6 +147,11 @@ The build script includes a feature to digitally sign the executable. To use it:
 
 This tool is an API client. As a user, you are responsible for abiding by the terms of service for all APIs this tool contacts. This tool is provided "as is," without warranty, and the authors are not liable for any misuse.
 
+**User Responsibilities & Content Notice:**
+- **Intended Use:** This Software is intended solely for the purpose of accessing and downloading open-access content.
+- **Compliance:** You, the user, are solely responsible for your use of this Software. You must ensure that your actions comply with all applicable copyright laws, institutional policies, and the terms of service of any third-party APIs used by this Software.
+- **No Guarantee:** The Software provides no guarantee that the content it retrieves is, in fact, open-access. The Author is not responsible for any content downloaded by the user in violation of any laws or agreements.
+
 This project gratefully acknowledges the following open data services:
 
 - **Crossref:** [https://www.crossref.org/services/metadata-retrieval/](https://www.crossref.org/services/metadata-retrieval/)
@@ -236,8 +239,7 @@ LitNexus/
 ├── .pre-commit-config.yaml
 │
 ├── README.md                      # This file
-├── LICENSE.txt                    # MIT License for the source code
-├── EULA.txt                       # End-User License Agreement for the executable
+├── LICENSE.txt                    # MIT License for the project
 │
 └── .gitignore
 ```
@@ -248,8 +250,6 @@ The application icon (`favicon.ico`) was downloaded from [Magnific](https://magn
 
 ---
 
-## 📜 License & EULA
+## 📜 License
 
-This project's source code is licensed under the **MIT License**. See the `LICENSE.txt` file for details.
-
-The distributed executable (`LitNexus.exe`) is governed by the **End-User License Agreement**. See the `EULA.txt` file for details on your rights and responsibilities when _using_ the software.
+This entire project—both its source code and the distributed executable—is licensed under the **MIT License**. See the `LICENSE.txt` file for details.

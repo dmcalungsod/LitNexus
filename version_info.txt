@@ -30,10 +30,10 @@ VSVersionInfo(
       StringTable(
         u'040904B0',
         [StringStruct(u'CompanyName', u'Diffon M. Calungsod'),
-        StringStruct(u'FileDescription', u'Open-Access PDF Retrieval System'),
+        StringStruct(u'FileDescription', u'LitNexus'),
         StringStruct(u'FileVersion', u'0.0.0.1'),
         StringStruct(u'InternalName', u'LitNexus'),
-        StringStruct(u'LegalCopyright', u'© 2026 Diffon M. Calungsod All rights reserved.'),
+        StringStruct(u'LegalCopyright', u'Copyright (c) 2026 Diffon M. Calungsod'),
         StringStruct(u'OriginalFilename', u'LitNexus.exe'),
         StringStruct(u'ProductName', u'LitNexus'),
         StringStruct(u'ProductVersion', u'0.0.0.1')])
