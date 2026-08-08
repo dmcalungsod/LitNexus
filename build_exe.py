@@ -19,7 +19,7 @@ console = Console()
 SCRIPT_DIR = Path(__file__).parent.resolve()  # Get script's absolute directory
 
 MAIN_SCRIPT = SCRIPT_DIR / "run.py"
-EXE_NAME = "PDF Retriever.exe"
+EXE_NAME = "LitNexus.exe"
 VERSION_FILE = SCRIPT_DIR / "version_info.txt"
 ICON_FILE = SCRIPT_DIR / "assets/favicon.ico"
 
@@ -62,7 +62,8 @@ def _build_pyinstaller_args() -> list[str]:
         args.append(f"--version-file={VERSION_FILE}")
     else:
         console.print(
-            f"   [yellow]⚠ Version file '{VERSION_FILE}' not found, building without metadata.[/yellow]"
+            f"[yellow]⚠ Version file '{VERSION_FILE}' not found, "
+            "building without metadata.[/yellow]"
         )
 
     if ICON_FILE.exists():
@@ -71,9 +72,8 @@ def _build_pyinstaller_args() -> list[str]:
         args.append(f"--add-data={ICON_FILE}{os.pathsep}assets")
     else:
         console.print(
-            f"   [yellow]⚠ Icon file '{ICON_FILE}' not found, using default icon.[/yellow]"
+            f"   [yellow]⚠ Icon file '{ICON_FILE}' not found, " "using default icon.[/yellow]"
         )
-
     args.extend(
         [
             "--onefile",
@@ -118,13 +118,13 @@ def _execute_pyinstaller(args: list[str]) -> bool:
                 encoding="utf-8",
             )
             progress.update(
-                task, completed=True, description="[green]✓ Build complete[/green]"
+                task,
+                completed=True,
+                description="[green]✓ Build complete[/green]",
             )
 
         if not EXE_PATH.exists():
-            console.print(
-                f"[red]✗ Build finished, but EXE not found at '{EXE_PATH}'[/red]"
-            )
+            console.print("[red]✗ Build finished, but EXE not found at " f"'{EXE_PATH}'[/red]")
             console.print(
                 Panel(
                     result.stdout,
@@ -135,9 +135,7 @@ def _execute_pyinstaller(args: list[str]) -> bool:
             )
             return False
 
-        console.print(
-            f"[bold green]✅ Build successful! Executable at: {EXE_PATH}[/bold green]"
-        )
+        console.print("[bold green]✅ Build successful! Executable at: " f"{EXE_PATH}[/bold green]")
         return True
 
     except subprocess.CalledProcessError as e:
@@ -145,13 +143,17 @@ def _execute_pyinstaller(args: list[str]) -> bool:
         error_output = e.stdout + "\n---\n" + e.stderr
         console.print(
             Panel(
-                error_output, title="PyInstaller Error", style="red", border_style="red"
+                error_output,
+                title="PyInstaller Error",
+                style="red",
+                border_style="red",
             )
         )
         return False
     except FileNotFoundError:
         console.print(
-            "[red]✗ Error: PyInstaller not found. Please install it with: [cyan]pip install pyinstaller[/cyan][/red]"
+            "[red]✗ Error: PyInstaller not found. Please install it with: "
+            "[cyan]pip install pyinstaller[/cyan][/red]"
         )
         return False
     except Exception as e:
@@ -184,7 +186,8 @@ def find_signtool() -> Path | None:
         return None
 
     x64_tool = next(
-        (path for path in signtool_paths if "x64" in str(path).lower()), None
+        (path for path in signtool_paths if "x64" in str(path).lower()),
+        None,
     )
     return x64_tool or signtool_paths[0]
 
@@ -196,13 +199,12 @@ def _find_pfx_file() -> tuple[Path | None, bool]:
     """
     pfx_files = list(SCRIPT_DIR.rglob("*.pfx"))
     if not pfx_files:
-        console.print(
-            "[yellow]⚠ Signing skipped: No .pfx certificate file found.[/yellow]"
-        )
+        console.print("[yellow]⚠ Signing skipped: " "No .pfx certificate file found.[/yellow]")
         return None, True
     elif len(pfx_files) > 1:
         console.print(
-            "[red]✗ Signing failed: Multiple .pfx files found. Please ensure only one is present.[/red]"
+            "[red]✗ Signing failed: Multiple .pfx files found. "
+            "Please ensure only one is present.[/red]"
         )
         return None, False
     return pfx_files[0], True
@@ -234,39 +236,55 @@ def _perform_signing(signtool_path: Path, pfx_path: Path, exe_path: Path, passwo
                 str(exe_path),
             ]
             subprocess.run(
-                sign_cmd, capture_output=True, text=True, check=True, encoding="utf-8"
+                sign_cmd,
+                capture_output=True,
+                text=True,
+                check=True,
+                encoding="utf-8",
             )
             progress.update(
-                task, advance=1, description="[green]✓ Executable signed[/green]"
+                task,
+                advance=1,
+                description="[green]✓ Executable signed[/green]",
             )
 
             verify_task = progress.add_task("Verifying signature...", total=1)
-            verify_cmd = [str(signtool_path), "verify", "/pa", "/v", str(exe_path)]
-            subprocess.run(
-                verify_cmd, capture_output=True, check=True, encoding="utf-8"
-            )
+            verify_cmd = [
+                str(signtool_path),
+                "verify",
+                "/pa",
+                "/v",
+                str(exe_path),
+            ]
+            subprocess.run(verify_cmd, capture_output=True, check=True, encoding="utf-8")
             progress.update(
                 verify_task,
                 advance=1,
                 description="[green]✓ Signature verified[/green]",
             )
 
-        console.print(
-            "[bold green]✅ Executable signed and verified successfully![/bold green]"
-        )
+        console.print("[bold green]✅ Executable signed and verified successfully![/" "bold green]")
         return True
 
     except subprocess.CalledProcessError as e:
         console.print("[red]✗ Signing failed[/red]")
         error_output = e.stdout + "\n---\n" + e.stderr
         console.print(
-            Panel(error_output, title="Signing Error", style="red", border_style="red")
+            Panel(
+                error_output,
+                title="Signing Error",
+                style="red",
+                border_style="red",
+            )
         )
         return False
 
 
 def run_signing(exe_path, cli_password=None):
-    """Run code signing by automatically locating the .pfx and signtool.exe files."""
+    """
+    Run code signing by automatically locating the .pfx and signtool.exe
+    files.
+    """
     console.rule("🔐 Code Signing", style="bold yellow")
 
     pfx_path, success = _find_pfx_file()
@@ -278,7 +296,8 @@ def run_signing(exe_path, cli_password=None):
     signtool_path = find_signtool()
     if not signtool_path:
         console.print(
-            "[yellow]⚠ Signing skipped: Could not find signtool.exe in the Windows Kits directory.[/yellow]"
+            "[yellow]⚠ Signing skipped: Could not find signtool.exe in the "
+            "Windows Kits directory.[/yellow]"
         )
         return True
 
@@ -359,9 +378,7 @@ def generate_and_save_hashes(exe_path: Path):
     console.rule("🧮 Generating File Hashes", style="bold blue")
 
     if not exe_path.exists():
-        console.print(
-            f"[red]✗ Cannot generate hashes: File not found at {exe_path}[/red]"
-        )
+        console.print(f"[red]✗ Cannot generate hashes: File not found at {exe_path}" "[/red]")
         return
 
     hash_results = _calculate_hashes(exe_path)
@@ -377,9 +394,7 @@ def _should_sign(args) -> bool:
         return True
 
     if can_sign:
-        sign = Prompt.ask(
-            "\nProceed with code signing?", choices=["y", "n"], default="y"
-        )
+        sign = Prompt.ask("\nProceed with code signing?", choices=["y", "n"], default="y")
         if sign.lower() == "y":
             return True
         else:
@@ -389,14 +404,12 @@ def _should_sign(args) -> bool:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Build and optionally sign the PDF Retriever CLI."
-    )
+    parser = argparse.ArgumentParser(description="Build and optionally sign the LitNexus application.")
     parser.add_argument("-p", "--password", help="PFX password for code signing.")
     args = parser.parse_args()
 
     console.clear()
-    console.rule("🚀 PDF Retriever Build, Sign & Hash", style="bold cyan")
+    console.rule("🚀 LitNexus Build, Sign & Hash", style="bold cyan")
 
     if not run_build():
         return 1
@@ -405,7 +418,7 @@ def main():
         if _should_sign(args):
             if not run_signing(EXE_PATH, cli_password=args.password):
                 console.print("[yellow]⚠ Build completed but signing failed.[/yellow]")
-        
+
         # --- Hashing is now the final step in the workflow ---
         generate_and_save_hashes(EXE_PATH)
 

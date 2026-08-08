@@ -2,7 +2,7 @@
 """
 Defines the source for Crossref.
 """
-import logging
+from src.downloader.logging_config import get_logger, start_operation
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote_plus
@@ -13,7 +13,7 @@ from src.downloader import config
 
 from .base import Source
 
-log = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class CrossrefSource(Source):
@@ -93,14 +93,14 @@ class CrossrefSource(Source):
                 return None
 
             data = response.json()
-            log.debug(f"[{self.name}] Full response for {doi}: {data}")
+            logger.debug(f"[{self.name}] Full response for {doi}: {data}")
             if data.get("status") != "ok":
-                log.debug(f"[{self.name}] No results found for DOI: {doi}")
+                logger.debug(f"[{self.name}] No results found for DOI: {doi}")
                 self._metadata_cache[doi] = None
                 return None
 
             message = data.get("message", {})
-            log.debug(f"[{self.name}] Message for {doi}: {message}")
+            logger.debug(f"[{self.name}] Message for {doi}: {message}")
 
             result = self._parse_metadata(message)
             result["doi"] = doi
@@ -108,7 +108,7 @@ class CrossrefSource(Source):
             return result
 
         except (requests.RequestException, ValueError) as e:
-            log.warning(f"[{self.name}] Metadata request failed for {doi}: {e}")
+            logger.warning(f"[{self.name}] Metadata request failed for {doi}: {e}")
             self._metadata_cache[doi] = None
             return None
 

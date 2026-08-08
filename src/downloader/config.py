@@ -4,10 +4,11 @@
 MAX_FILENAME_LEN = 200
 
 USER_AGENTS = [
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36",
-    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36",
-    "OA-PDF-Retriever/1.0 (https://github.com/user/repo; mailto:175473063+Zosick@users.noreply.github.com)",
+    # Modern mainstream desktop browsers to reduce bot-blocking risks
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Safari/605.1.15",
+    "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0",
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edg/127.0.0.0 Chrome/127.0.0.0 Safari/537.36",
 ]
 
 UNPAYWALL_API_URL = "https://api.unpaywall.org/v2/{doi}"
@@ -22,4 +23,3 @@ DOAJ_API_URL = "https://doaj.org/api/v2/"
 ZENODO_API_URL = "https://zenodo.org/api/"
 OSF_API_URL = "https://api.osf.io/v2/"
 CROSSREF_API_URL = "https://api.crossref.org/"
-

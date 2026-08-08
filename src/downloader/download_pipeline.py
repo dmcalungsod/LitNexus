@@ -1,4 +1,4 @@
-import logging
+from src.downloader.logging_config import get_logger, start_operation
 import threading
 from pathlib import Path
 from typing import Any
@@ -10,7 +10,7 @@ from .source_manager import SourceManager
 from .types import DownloadContext
 from .utils import format_authors_apa
 
-log = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 class DownloadPipeline:
     def __init__(self, source_manager: SourceManager, output_dir: Path, stats: dict[str, Any], stats_lock: threading.Lock):

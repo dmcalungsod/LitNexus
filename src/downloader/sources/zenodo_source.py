@@ -2,7 +2,7 @@
 """
 Defines the source for Zenodo.
 """
-import logging
+from src.downloader.logging_config import get_logger, start_operation
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote_plus
@@ -13,7 +13,7 @@ from src.downloader import config
 
 from .base import Source
 
-log = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class ZenodoSource(Source):
@@ -38,7 +38,7 @@ class ZenodoSource(Source):
 
             data = response.json()
             if data.get("hits", {}).get("total", 0) == 0:
-                log.debug(f"[{self.name}] No results found for DOI: {doi}")
+                logger.debug(f"[{self.name}] No results found for DOI: {doi}")
                 return None
 
             # The first result is the most likely match
@@ -67,7 +67,7 @@ class ZenodoSource(Source):
             }
 
         except (requests.RequestException, ValueError) as e:
-            log.warning(f"[{self.name}] Metadata request failed for {doi}: {e}")
+            logger.warning(f"[{self.name}] Metadata request failed for {doi}: {e}")
             return None
 
     def download(self, doi: str, filepath: Path, metadata: dict[str, Any]) -> bool:

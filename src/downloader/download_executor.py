@@ -1,11 +1,11 @@
-import logging
+from src.downloader.logging_config import get_logger, start_operation
 import threading
 from typing import Any
 
 from .source_manager import SourceManager
 from .types import DownloadContext
 
-log = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 class DownloadExecutor:
     def __init__(self, source_manager: SourceManager, stats: dict[str, Any], stats_lock: threading.Lock):
@@ -19,7 +19,7 @@ class DownloadExecutor:
             self.stats["sources"][source_name] = (
                 self.stats["sources"].get(source_name, 0) + 1
             )
-        log.info(f"Success ({source_name}): {doi} -> {filename}")
+        logger.info(f"Success ({source_name}): {doi} -> {filename}")
 
     def check_if_skipped(self, ctx: DownloadContext) -> dict[str, Any] | None:
         if ctx.filepath.exists() and ctx.filepath.stat().st_size > 5000:
@@ -69,5 +69,5 @@ class DownloadExecutor:
                         "citation": ctx.citation,
                     }
             except Exception as e:
-                log.warning(f"{source.name} failed: {e}")
+                logger.warning(f"{source.name} failed: {e}")
         return None

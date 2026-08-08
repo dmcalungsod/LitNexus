@@ -1,11 +1,11 @@
-import logging
+from src.downloader.logging_config import get_logger, start_operation
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any
 
 from .source_manager import SourceManager
 from .sources import Source
 
-log = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 class MetadataFetcher:
     def __init__(self, source_manager: SourceManager):

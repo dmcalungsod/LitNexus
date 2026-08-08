@@ -2,7 +2,7 @@
 """
 Defines the source for the Open Science Framework (OSF).
 """
-import logging
+from src.downloader.logging_config import get_logger, start_operation
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote_plus
@@ -13,7 +13,7 @@ from src.downloader import config
 
 from .base import Source
 
-log = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class OSFSource(Source):
@@ -52,7 +52,7 @@ class OSFSource(Source):
 
         data = response.json()
         if data.get("meta", {}).get("total", 0) == 0:
-            log.debug(f"[{self.name}] No results found for DOI: {doi}")
+            logger.debug(f"[{self.name}] No results found for DOI: {doi}")
             return None
         return data
 
@@ -103,7 +103,7 @@ class OSFSource(Source):
             return self._parse_metadata(data, doi)
 
         except (requests.RequestException, ValueError) as e:
-            log.warning(f"[{self.name}] Metadata request failed for {doi}: {e}")
+            logger.warning(f"[{self.name}] Metadata request failed for {doi}: {e}")
             return None
 
 

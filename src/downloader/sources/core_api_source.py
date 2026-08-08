@@ -1,4 +1,4 @@
-import logging
+from src.downloader.logging_config import get_logger, start_operation
 from typing import Any
 from urllib.parse import quote_plus
 
@@ -8,7 +8,7 @@ from src.downloader import config
 
 from .base import Source
 
-log = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 class CoreApiSource(Source):
     def __init__(self, session: requests.Session, api_key: str | None):
@@ -24,7 +24,7 @@ class CoreApiSource(Source):
             resp = self._make_request(url, headers=headers, timeout=10)
             if resp and resp.status_code == 200: return resp.json()
         except Exception as e:
-            log.error(f"[{self.name}] Failed to get data for DOI {doi}: {e}", exc_info=True)
+            logger.error(f"[{self.name}] Failed to get data for DOI {doi}: {e}", exc_info=True)
         return None
 
     def get_metadata(self, doi: str) -> dict[str, Any] | None:

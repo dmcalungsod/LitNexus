@@ -1,4 +1,4 @@
-import logging
+from src.downloader.logging_config import get_logger, start_operation
 from typing import Any
 from urllib.parse import quote_plus
 
@@ -8,7 +8,7 @@ from src.downloader import config
 
 from .base import Source
 
-log = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 class UnpaywallSource(Source):
     def __init__(self, session: requests.Session, email: str):
@@ -18,7 +18,7 @@ class UnpaywallSource(Source):
 
     def get_metadata(self, doi: str) -> dict[str, Any] | None:
         if not self.email:
-            log.warning(f"[{self.name}] Email not configured, skipping Unpaywall.")
+            logger.warning(f"[{self.name}] Email not configured, skipping Unpaywall.")
             return None
         try:
             url = config.UNPAYWALL_API_URL.format(doi=quote_plus(doi))
@@ -44,7 +44,7 @@ class UnpaywallSource(Source):
                 "_pdf_url": best_oa.get("url_for_pdf")
             }
         except (requests.RequestException, ValueError, KeyError) as e:
-            log.warning(f"[{self.name}] Unpaywall error for {doi}: {e}")
+            logger.warning(f"[{self.name}] Unpaywall error for {doi}: {e}")
             return None
 
     def download(self, doi: str, filepath, metadata: dict[str, Any]) -> bool:

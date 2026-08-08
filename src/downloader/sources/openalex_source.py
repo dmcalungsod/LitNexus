@@ -1,4 +1,4 @@
-import logging
+from src.downloader.logging_config import get_logger, start_operation
 from typing import Any
 from urllib.parse import quote_plus
 
@@ -8,12 +8,13 @@ from src.downloader import config
 
 from .base import Source
 
-log = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 class OpenAlexSource(Source):
-    def __init__(self, session: requests.Session):
+    def __init__(self, session: requests.Session, api_key: str | None = None):
         super().__init__(session)
         self.api_url = config.OPENALEX_API_URL
+        self.api_key = api_key
         self._metadata_cache: dict[str, dict[str, Any] | None] = {}
 
     def get_metadata(self, doi: str) -> dict[str, Any] | None:

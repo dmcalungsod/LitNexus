@@ -20,7 +20,7 @@ from .sources import (
 
 
 class SourceManager:
-    def __init__(self, session: requests.Session, email: str, core_api_key: str | None):
+    def __init__(self, session: requests.Session, email: str, core_api_key: str | None, openalex_api_key: str | None = None):
         self.session = session
         self.email = email
         self.core_api_key = core_api_key
@@ -32,7 +32,7 @@ class SourceManager:
         self.doaj_source = DOAJSource(self.session)
         self.zenodo_source = ZenodoSource(self.session)
         self.osf_source = OSFSource(self.session)
-        self.openalex_source = OpenAlexSource(self.session)
+        self.openalex_source = OpenAlexSource(self.session, openalex_api_key)
         self.semantic_scholar_source = SemanticScholarSource(self.session)
         self.arxiv_source = ArxivSource(self.session)
         self.crossref_source = CrossrefSource(self.session)

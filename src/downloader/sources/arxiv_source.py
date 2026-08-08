@@ -1,4 +1,4 @@
-import logging
+from src.downloader.logging_config import get_logger, start_operation
 import re
 from typing import Any
 from xml.etree.ElementTree import Element
@@ -10,7 +10,7 @@ from src.downloader import config
 
 from .base import Source
 
-log = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 class ArxivSource(Source):
     ARXIV_DOI_REGEX = r"10\.48550/arXiv\.(\d+\.\d+v?\d*)"
@@ -67,7 +67,7 @@ class ArxivSource(Source):
                 "doi": doi
             }
         except Exception as e:
-            log.error(f"[{self.name}] XML parsing failed for {doi}: {e}", exc_info=True)
+            logger.error(f"[{self.name}] XML parsing failed for {doi}: {e}", exc_info=True)
             return None
 
     def get_metadata(self, doi: str) -> dict[str, Any] | None:
@@ -80,7 +80,7 @@ class ArxivSource(Source):
             
             return self._parse_metadata_from_xml(resp.text, doi)
         except Exception as e:
-            log.error(f"[{self.name}] Metadata request failed for {doi}: {e}", exc_info=True)
+            logger.error(f"[{self.name}] Metadata request failed for {doi}: {e}", exc_info=True)
             return None
 
     def download(self, doi: str, filepath, metadata: dict[str, Any]) -> bool:

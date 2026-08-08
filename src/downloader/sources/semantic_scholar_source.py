@@ -1,4 +1,4 @@
-import logging
+from src.downloader.logging_config import get_logger, start_operation
 from typing import Any
 from urllib.parse import quote_plus
 
@@ -8,7 +8,7 @@ from src.downloader import config
 
 from .base import Source
 
-log = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 class SemanticScholarSource(Source):
     def __init__(self, session: requests.Session):

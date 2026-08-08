@@ -7,7 +7,7 @@ from pathlib import Path
 
 from cryptography.fernet import Fernet
 
-CONFIG_DIR = Path.home() / ".pdf_retriever"
+CONFIG_DIR = Path.home() / ".litnexus"
 CONFIG_DIR.mkdir(parents=True, exist_ok=True)
 CONFIG_FILE = CONFIG_DIR / "settings.json"
 KEY_FILE = CONFIG_DIR / "key.key"

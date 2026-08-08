@@ -18,6 +18,9 @@ from pathlib import Path
 from typing import Any
 
 from .core import Downloader
+from src.downloader.logging_config import get_logger, start_operation
+
+logger = get_logger(__name__)
 
 
 class DownloadManager(threading.Thread):
@@ -40,10 +43,11 @@ class DownloadManager(threading.Thread):
         self.fail_lock = threading.Lock()
 
         self.downloader = Downloader(
-            output_dir=settings["output_dir"],
-            email=settings["email"],
+            output_dir=settings.get("output_dir", str(Path.home() / "Downloads" / "LitNexus")),
+            email=settings.get("email", ""),
             core_api_key=settings.get("core_api_key"),
-            verify_ssl=settings["verify_ssl"],
+            verify_ssl=settings.get("verify_ssl", True),
+            openalex_api_key=settings.get("openalex_api_key"),
         )
         self.executor = None
         self.future_map: dict[Future[Any], str] = {}
@@ -57,10 +61,10 @@ class DownloadManager(threading.Thread):
                     f.write(f"{doi}\n")
         except Exception as e:
             # Log to console if writing to file fails
-            print(f"CRITICAL: Failed to write to fail_log: {e}")
+            logger.error(f"Failed to write to fail_log: {e}", extra={"event": "fail_log_error"})
 
     def _submit_tasks(self) -> dict[Future[Any], str]:
-        self.executor = ThreadPoolExecutor(max_workers=self.settings["max_workers"])
+        self.executor = ThreadPoolExecutor(max_workers=self.settings.get("max_workers", 10))
         return {
             self.executor.submit(
                 self.downloader.download_one, doi, self._cancel_event
@@ -142,6 +146,8 @@ class DownloadManager(threading.Thread):
 
     def run(self):
         """Runs the entire download process in this worker thread."""
+        op_id = start_operation()
+        logger.info(f"Starting download manager run for DOIs: {self.dois}", extra={"event": "download_manager_start"})
         self._cancel_event.clear()
         
         try:

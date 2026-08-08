@@ -12,6 +12,7 @@ import defusedxml.ElementTree as ET
 import rispy
 
 from .utils import clean_doi
+from .pdf_extractor import extract_dois_from_pdf
 
 DOI_REGEX = r"\b(10[.]\d{4,9}/[-._;()/:A-Z0-9]+)\b"
 
@@ -81,14 +82,18 @@ def _detect_parser_from_content(text: str) -> Callable[[str], list[str]]:
 def extract_dois_from_file(filepath: str) -> list[str]:
     """
     Reads a file and extracts DOIs based on its content and extension.
-    Supports .bib, .ris, .xml, .enw, .txt, .csv, and .json.
+    Supports .bib, .ris, .xml, .enw, .txt, .csv, .json, and .pdf.
     """
     p = Path(filepath)
     if not p.exists():
         raise FileNotFoundError(f"File not found: {filepath}")
 
-    text = p.read_text(encoding="utf-8", errors="ignore")
     ext = p.suffix.lower()
+
+    if ext == ".pdf":
+        return extract_dois_from_pdf(filepath)
+
+    text = p.read_text(encoding="utf-8", errors="ignore")
 
     parser_map = {
         ".bib": _parse_bibtex,

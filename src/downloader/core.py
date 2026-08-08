@@ -1,5 +1,5 @@
 # src/downloader/core.py
-import logging
+from src.downloader.logging_config import get_logger, start_operation
 import random
 import threading
 from pathlib import Path
@@ -13,7 +13,7 @@ from . import config
 from .download_pipeline import DownloadPipeline
 from .source_manager import SourceManager
 
-log = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 class Downloader:
     """Manages the PDF download pipeline and metadata orchestration."""
@@ -24,6 +24,7 @@ class Downloader:
         email: str,
         core_api_key: str | None,
         verify_ssl: bool = True,
+        openalex_api_key: str | None = None,
     ):
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -33,7 +34,7 @@ class Downloader:
         self.stats: dict[str, Any] = {"success": 0, "fail": 0, "skipped": 0, "sources": {}}
         self._stats_lock = threading.Lock()
 
-        self.source_manager = SourceManager(self.session, self.email, core_api_key)
+        self.source_manager = SourceManager(self.session, self.email, core_api_key, openalex_api_key)
         self.pipeline = DownloadPipeline(
             self.source_manager,
             self.output_dir,
@@ -48,7 +49,7 @@ class Downloader:
         if not self.verify_ssl:
             import urllib3
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-            log.warning("SSL verification disabled.")
+            logger.warning("SSL verification disabled.")
 
         retries = Retry(total=5, backoff_factor=1, status_forcelist=[408, 429, 500, 502, 503, 504])
         adapter = HTTPAdapter(max_retries=retries)

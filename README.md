@@ -1,20 +1,25 @@
 # Open-Access PDF Retrieval System
 
-![Last Commit](https://img.shields.io/github/last-commit/Zosick/PDF-Retriever?style=flat-square)
-![Forks](https://img.shields.io/github/forks/Zosick/PDF-Retriever?style=flat-square)
-![Issues](https://img.shields.io/github/issues/Zosick/PDF-Retriever?style=flat-square)
-![Contributors](https://img.shields.io/github/contributors/Zosick/PDF-Retriever?style=flat-square)
-![Stars](https://img.shields.io/github/stars/Zosick/PDF-Retriever?style=flat-square)
-![License](https://img.shields.io/github/license/Zosick/PDF-Retriever?style=flat-square)
+![Last Commit](https://img.shields.io/github/last-commit/Zosick/LitNexus?style=flat-square)
+![Forks](https://img.shields.io/github/forks/Zosick/LitNexus?style=flat-square)
+![Issues](https://img.shields.io/github/issues/Zosick/LitNexus?style=flat-square)
+![Contributors](https://img.shields.io/github/contributors/Zosick/LitNexus?style=flat-square)
+![Stars](https://img.shields.io/github/stars/Zosick/LitNexus?style=flat-square)
+![License](https://img.shields.io/github/license/Zosick/LitNexus?style=flat-square)
 
 A modern graphical user interface (GUI) application designed to efficiently download open-access PDF articles using their Digital Object Identifiers (DOIs). The system features a robust, multi-source retrieval pipeline and supports a wide range of academic citation file formats.
 
 > [!NOTE]
-> **Migration to GUI**: This project is transitioning from a command-line interface to a full-featured GUI using CustomTkinter for an improved user experience.
+> **Migration to PySide6**: This project has completely transitioned from a command-line interface to a robust PySide6 GUI workspace.
+
+> [!WARNING]
+> **Development Status**: This application is currently under active development and is not yet production-ready. The system's behavior may be unstable or incomplete, and users may encounter unexpected errors, unhandled exceptions, and numerous known or potentially unknown bugs during operation.
 
 ## ✨ Key Features
 
-- **Modern GUI:** A sleek, user-friendly graphical interface built with `CustomTkinter` for an intuitive experience.
+- **Modern GUI Workspace:** A sleek, dark-mode PySide6 interface featuring a split-pane design (data grid + preview panel) that acts as your central literature hub.
+- **Literature Snowballing:** Instantly fetch and navigate through references (past papers) and citations (future papers) to discover new literature.
+- **Selective Downloading:** Use the grid's checkboxes to selectively download specific PDFs, or trigger one-off downloads directly from the preview panel.
 - **Broad File Support:** Extracts DOIs directly from various citation formats, including:
   - BibTeX (`.bib`)
   - RIS (`.ris`)
@@ -48,8 +53,8 @@ To get started, clone the repository and install the required Python packages.
 1. **Clone the repository:**
 
     ```bash
-    git clone https://github.com/Zosick/PDF-Retriever.git
-    cd PDF-Retriever
+    git clone https://github.com/Zosick/LitNexus.git
+    cd LitNexus
     ```
 
 2. **Create a virtual environment (recommended):**
@@ -85,17 +90,18 @@ python -m src.downloader.gui
 Or use the standalone executable (after building):
 
 ```bash
-.\dist\"PDF Retriever.exe"
+.\dist\"LitNexus.exe"
 ```
 
-### GUI Features
+### Step-by-Step Workflow
 
-- **Settings Panel:** Configure output directory, Unpaywall email (Required), CORE API key, SSL settings, and parallel download count.
-- **DOI Input:** Load DOIs from citation files (.bib, .ris, .json, etc.) or paste them directly.
-- **Real-time Progress:** Live progress bar and detailed logging of each download.
-- **Retry Failed Downloads:** Automatically load and retry previously failed DOIs.
-- **System Status Check:** Test connectivity to all 10+ APIs with one click.
-- **Open Output Folder:** Quick access to your downloaded PDFs.
+1. **Configure (⚙ Settings):** Start by entering your email address for Unpaywall and selecting your output directory.
+2. **Add a Seed Paper:** Click **"＋ Add DOI"** in the root workspace to manually add a starting paper. The app will resolve its metadata instantly.
+3. **Explore the Graph:** Select the paper and look at the right-side preview panel. Click **"Fetch"** under References or Citations to discover related literature.
+4. **Navigate:** Click **"View"** to see the newly discovered Generation 1 papers in the grid. Use the breadcrumbs (`< Back`) to traverse up and down your discovery tree.
+5. **Filter & Select:** Use the search bar and generation/status filters to organize the view. Use the checkboxes (`✓`) to select the papers you want to read.
+6. **Download PDFs:** Click **"↓ Download Selected"** to fetch the OA PDFs in the background. Or, click the large **"↓ Download PDF"** hero button on any single paper's preview.
+7. **Read:** Once downloaded, click **"Open PDF"** from the preview panel to view it instantly.
 
 ---
 
@@ -115,7 +121,7 @@ You can compile the entire project into a single `.exe` file using the included 
     python build_exe.py
     ```
 
-The script will automatically clean previous artifacts, build the executable, and place the final `PDF Retriever.exe` file inside the `dist` folder.
+The script will automatically clean previous artifacts, build the executable, and place the final `LitNexus.exe` file inside the `dist` folder.
 
 ### Code Signing (Optional)
 
@@ -165,26 +171,27 @@ This project gratefully acknowledges the following open data services:
 This project has been refactored for clarity and maintainability.
 
 ```text
-PDF-Retriever-project/
+LitNexus/
 │
 ├── src/
 │   └── downloader/
 │       ├── __init__.py
-│       ├── __main__.py         # Makes the package runnable
-│       ├── cli.py              # The interactive rich-based UI
-│       ├── config.py           # API endpoints and constants
-│       ├── core.py             # The main Downloader orchestration class
-│       ├── download_manager.py # Threaded download manager
+│       ├── config.py              # API endpoints and constants
+│       ├── core.py                # The main Downloader orchestration class
+│       ├── download_executor.py   # Executes individual file downloads
+│       ├── download_manager.py    # Threaded download manager
+│       ├── download_pipeline.py   # Multi-source download pipeline
 │       ├── exceptions.py
-│       ├── gui.py              # CustomTkinter GUI
-│       ├── parsers.py          # DOI extraction from .bib, .ris, etc.
-│       ├── protocol.py         # Protocol definitions
-│       ├── settings.py         # Settings models
-│       ├── settings_manager.py # Settings persistence
-│       ├── source_manager.py   # Manages source prioritization
-│       ├── sources/            # Metadata and download sources
+│       ├── filename_generator.py  # APA-style filename builder
+│       ├── metadata_fetcher.py    # Parallel metadata retrieval
+│       ├── parsers.py             # DOI extraction from .bib, .ris, etc.
+│       ├── protocol.py            # Protocol definitions
+│       ├── settings.py            # Settings models
+│       ├── settings_manager.py    # Settings persistence
+│       ├── source_manager.py      # Manages source prioritization
+│       ├── sources/               # Metadata and download sources
 │       │   ├── __init__.py
-│       │   ├── base.py         # Abstract Base Source class
+│       │   ├── base.py            # Abstract Base Source class
 │       │   ├── arxiv_source.py
 │       │   ├── core_api_source.py
 │       │   ├── crossref_source.py
@@ -196,27 +203,48 @@ PDF-Retriever-project/
 │       │   ├── semantic_scholar_source.py
 │       │   ├── unpaywall_source.py
 │       │   └── zenodo_source.py
-│       ├── tui.py              # Terminal UI components
-│       ├── types.py            # Type definitions
-│       ├── utils.py            # Filename sanitizers and author formatters
+│       ├── gui/                   # PySide6 GUI package
+│       │   ├── __init__.py
+│       │   ├── __main__.py             # Makes the GUI runnable
+│       │   ├── main_window.py          # Main application layout and controller
+│       │   ├── workspace_widget.py     # Data grid and central workspace UI
+│       │   ├── paper_preview_widget.py # Right-side paper details and actions
+│       │   ├── paper_details_dialog.py # Pop-up dialog for extended paper info
+│       │   ├── settings_widget.py      # App configuration panel
+│       │   └── status_widget.py        # Progress, logs, and activity overlay
+│       ├── types.py               # Type definitions
+│       └── utils.py               # Filename sanitizers and author formatters
+│
+├── tests/
+│   ├── conftest.py
+│   ├── test_core.py
+│   ├── test_download_manager.py
+│   ├── test_gui.py
+│   └── test_parsers.py
 │
 ├── assets/
 │   └── favicon.ico
 │
-├── data/                       # (GitIgnored) Saved settings
-├── downloads/                  # (GitIgnored) Default PDF output folder
-├── output/                     # (GitIgnored) Failed DOI lists
+├── data/                          # (GitIgnored) Saved settings
+├── downloads/                     # (GitIgnored) Default PDF output folder
+├── output/                        # (GitIgnored) Failed DOI lists
 │
-├── run.py                      # Simple entry script
-├── build_exe.py                # PyInstaller build script
+├── run.py                         # Simple entry script
+├── build_exe.py                   # PyInstaller build script
 ├── requirements.txt
+├── pyproject.toml                 # Ruff and mypy configuration
+├── .pre-commit-config.yaml
 │
-├── README.md                   # This file
-├── LICENSE.txt                 # MIT License for the source code
-├── EULA.txt                    # End-User License Agreement for the executable
+├── README.md                      # This file
+├── LICENSE.txt                    # MIT License for the source code
+├── EULA.txt                       # End-User License Agreement for the executable
 │
 └── .gitignore
 ```
+
+## ✨ Attributions
+
+The application icon (`favicon.ico`) was downloaded from [Magnific](https://magnific.com/) stock images.
 
 ---
 
@@ -224,4 +252,4 @@ PDF-Retriever-project/
 
 This project's source code is licensed under the **MIT License**. See the `LICENSE.txt` file for details.
 
-The distributed executable (`PDF Retriever.exe`) is governed by the **End-User License Agreement**. See the `EULA.txt` file for details on your rights and responsibilities when _using_ the software.
+The distributed executable (`LitNexus.exe`) is governed by the **End-User License Agreement**. See the `EULA.txt` file for details on your rights and responsibilities when _using_ the software.

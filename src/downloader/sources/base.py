@@ -1,4 +1,4 @@
-import logging
+from src.downloader.logging_config import get_logger, start_operation
 import threading
 import time
 from abc import ABC, abstractmethod
@@ -10,7 +10,7 @@ import requests
 
 from ..utils import find_pdf_link_on_page
 
-log = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 class Source(ABC):
     """Abstract base class for a PDF source."""
@@ -41,7 +41,7 @@ class Source(ABC):
                 r.raise_for_status()
                 return (True, "API is reachable")
             except Exception as e:
-                log.debug(f"[{self.name}] Test ping failed: {e}")
+                logger.debug(f"[{self.name}] Test ping failed: {e}")
                 return (False, "API may be unreachable")
         return (True, "No test implemented")
 
@@ -60,11 +60,11 @@ class Source(ABC):
     def _validate_downloaded_file(self, filepath: Path, content_length: str | None) -> bool:
         file_size = filepath.stat().st_size
         if file_size < 5000:
-            log.warning(f"[{self.name}] File too small ({file_size} bytes).")
+            logger.warning(f"[{self.name}] File too small ({file_size} bytes).")
             return False
         
         if content_length and abs(file_size - int(content_length)) > 1000:
-            log.warning(f"[{self.name}] File size mismatch.")
+            logger.warning(f"[{self.name}] File size mismatch.")
         return True
 
     def _validate_pdf_structure(self, filepath: Path) -> bool:
@@ -72,14 +72,14 @@ class Source(ABC):
         with filepath.open("rb") as fh:
             header = fh.read(1024)
             if not header.startswith(b"%PDF-"):
-                log.warning(f"[{self.name}] Invalid PDF header.")
+                logger.warning(f"[{self.name}] Invalid PDF header.")
                 return False
             
             seek_pos = max(0, file_size - 1024)
             fh.seek(seek_pos)
             
             if b"%%EOF" not in fh.read(1024):
-                log.warning(f"[{self.name}] Incomplete PDF (missing EOF).")
+                logger.warning(f"[{self.name}] Incomplete PDF (missing EOF).")
                 return False
         return True
 
@@ -89,7 +89,7 @@ class Source(ABC):
         content_type = resp.headers.get("Content-Type", "").lower()
 
         if "application/pdf" not in content_type:
-            log.warning(f"[{self.name}] Content-Type is not PDF ({content_type})")
+            logger.warning(f"[{self.name}] Content-Type is not PDF ({content_type})")
             return False
 
         try:
@@ -102,10 +102,10 @@ class Source(ABC):
                 return False
 
             tmp_path.rename(filepath)
-            log.info(f"[{self.name}] Saved PDF: {filepath.name}")
+            logger.info(f"[{self.name}] Saved PDF: {filepath.name}")
             return True
         except Exception as e:
-            log.error(f"[{self.name}] Save error: {e}")
+            logger.error(f"[{self.name}] Save error: {e}")
             return False
         finally:
             if tmp_path.exists(): tmp_path.unlink()
@@ -121,7 +121,7 @@ class Source(ABC):
         return False
 
     def _attempt_fallback_download(self, url: str, filepath: Path) -> bool:
-        log.debug(f"[{self.name}] scraping fallback for {url}")
+        logger.debug(f"[{self.name}] scraping fallback for {url}")
         pdf_url = find_pdf_link_on_page(url, self.session)
         if pdf_url:
             with self.session.get(pdf_url, stream=True, timeout=30) as r2:
@@ -156,12 +156,12 @@ class Source(ABC):
 
             except Exception as e:
                 if attempt == max_retries - 1:
-                    log.warning(f"[{self.name}] Fetch failed: {e}")
+                    logger.warning(f"[{self.name}] Fetch failed: {e}")
                 time.sleep((attempt + 1) * 2)
         return False
 
     def _make_request(self, url: str, method: str = "GET", **kwargs) -> requests.Response | None:
-        log.debug(f"[{self.name}] Making request: {method} {url} {kwargs}")
+        logger.debug(f"[{self.name}] Making request: {method} {url} {kwargs}")
         try:
             self._rate_limit()
             if "headers" in kwargs:
@@ -173,5 +173,5 @@ class Source(ABC):
             response.raise_for_status()
             return response
         except Exception as e:
-            log.debug(f"[{self.name}] Request failed for {url}: {e}")
+            logger.debug(f"[{self.name}] Request failed for {url}: {e}")
             return None

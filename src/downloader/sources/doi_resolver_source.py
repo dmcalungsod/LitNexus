@@ -1,4 +1,4 @@
-import logging
+from src.downloader.logging_config import get_logger, start_operation
 from typing import Any
 from urllib.parse import quote_plus
 
@@ -8,7 +8,7 @@ from src.downloader import config
 
 from .base import Source
 
-log = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 class DoiResolverSource(Source):
     def __init__(self, session: requests.Session):
@@ -24,5 +24,5 @@ class DoiResolverSource(Source):
             # So we use _fetch_and_save's logic but targeted
             return self._fetch_and_save(url, filepath, headers=headers)
         except Exception as e:
-            log.debug(f"DOI Resolver failed: {e}")
+            logger.debug(f"DOI Resolver failed: {e}")
             return False

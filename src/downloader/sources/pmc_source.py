@@ -1,4 +1,4 @@
-import logging
+from src.downloader.logging_config import get_logger, start_operation
 from pathlib import Path
 from typing import Any
 from xml.etree.ElementTree import Element, ParseError
@@ -10,7 +10,7 @@ from src.downloader import config
 
 from .base import Source
 
-log = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class PubMedCentralSource(Source):
@@ -37,7 +37,7 @@ class PubMedCentralSource(Source):
         data = response.json()
         id_list = data.get("esearchresult", {}).get("idlist", [])
         if not id_list:
-            log.debug(f"[{self.name}] No PMCID found for DOI: {doi}")
+            logger.debug(f"[{self.name}] No PMCID found for DOI: {doi}")
             return None
         return id_list[0]
 
@@ -92,7 +92,7 @@ class PubMedCentralSource(Source):
             return self._parse_metadata_xml(root, doi, pmcid)
 
         except (requests.RequestException, ValueError, ParseError) as e:
-            log.warning(f"[{self.name}] Metadata request failed for {doi}: {e}")
+            logger.warning(f"[{self.name}] Metadata request failed for {doi}: {e}")
             return None
 
     def download(self, doi: str, filepath: Path, metadata: dict[str, Any]) -> bool:
@@ -101,7 +101,7 @@ class PubMedCentralSource(Source):
         """
         pmcid = metadata.get("pmcid")
         if not pmcid:
-            log.debug(f"[{self.name}] No PMCID found in metadata for DOI: {doi}")
+            logger.debug(f"[{self.name}] No PMCID found in metadata for DOI: {doi}")
             return False
 
         try:
@@ -116,7 +116,7 @@ class PubMedCentralSource(Source):
             root = ET.fromstring(response.content)
             pdf_link = root.find(".//link[@format='pdf']")
             if pdf_link is None or not pdf_link.get("href"):
-                log.debug(f"[{self.name}] No PDF link found for PMCID: {pmcid}")
+                logger.debug(f"[{self.name}] No PDF link found for PMCID: {pmcid}")
                 return False
 
             pdf_url = pdf_link.get("href")
@@ -125,5 +125,5 @@ class PubMedCentralSource(Source):
             return False
 
         except (requests.RequestException, ParseError) as e:
-            log.warning(f"[{self.name}] Download failed for {doi}: {e}")
+            logger.warning(f"[{self.name}] Download failed for {doi}: {e}")
             return False
