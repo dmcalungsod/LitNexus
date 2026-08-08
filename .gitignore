@@ -26,7 +26,8 @@ output/
 temp/
 logs/
 *.pdf
-.db
+*.db
+
 # Ignore temporary output logs
 output.txt
 output_error.txt
