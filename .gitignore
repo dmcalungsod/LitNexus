@@ -1,47 +1,31 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-.env
-.venv
-env/
-venv/
-*.egg-info/
-*.egg
-*.spec
-*.log
-
-# Build Artifacts
+# Compiled Executables & Build Artifacts
+build/bin/
 build/
-dist/
+frontend/dist/
+node_modules/
 
-# OS / Editor
-.DS_Store
-Thumbs.db
-
-# Project Data (Ignored by default per your structure)
-data/
-downloads/
-output/
-temp/
-logs/
-*.pdf
+# Database & Environment
+workspace.db
 *.db
+.env
+.env.local
 
-# Ignore temporary output logs
+# Logs & Output PDFs
+logs/
+*.log
+*.pdf
 output.txt
 output_error.txt
-*.log
-output*.txt
 
-# Security & Credentials
+# OS & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Security Keys
 *.pfx
 key.key
 
-# Replit-specific
-.pythonlibs/
-.cache/
-.upm/
-.config/
-replit.nix
-.replit
+#Assets
+assets/

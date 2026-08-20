@@ -8,125 +8,206 @@
 ![License](https://img.shields.io/github/license/dmcalungsod/LitNexus?style=flat-square&cache=none)
 ![Open Source](https://img.shields.io/badge/Open%20Source-%E2%9D%A4-green?style=flat-square)
 
-A modern, open-source graphical user interface (GUI) application designed to efficiently download open-access PDF articles using their Digital Object Identifiers (DOIs). The system features a robust, multi-source retrieval pipeline and supports a wide range of academic citation file formats.
+A modern, open-source desktop application for discovering and downloading open-access academic PDFs using Digital Object Identifiers (DOIs). Built with **Go**, **Wails v2**, **React**, **TypeScript**, and **Tailwind CSS**, LitNexus features a multi-source metadata retrieval pipeline, literature snowballing, and broad citation file format support — all compiled into a single lightweight executable.
 
 > [!WARNING]
-> **Development Status**: This application is currently under active development and is not yet production-ready. The system's behavior may be unstable or incomplete, and users may encounter unexpected errors, unhandled exceptions, and numerous known or potentially unknown bugs during operation.
-
-## ✨ Key Features
-
-- **Modern GUI Workspace:** A sleek, dark-mode PySide6 interface featuring a split-pane design (data grid + preview panel) that acts as your central literature hub.
-- **Literature Snowballing:** Instantly fetch and navigate through references (past papers) and citations (future papers) to discover new literature.
-- **Selective Downloading:** Use the grid's checkboxes to selectively download specific PDFs, or trigger one-off downloads directly from the preview panel.
-- **Broad File Support:** Extracts DOIs directly from various citation formats, including:
-  - BibTeX (`.bib`)
-  - RIS (`.ris`)
-  - EndNote XML (`.xml`, `.enw`)
-  - Zotero JSON (`.json`)
-  - Plain text lists (`.txt`, `.csv`)
-- **Advanced Metadata Pipeline:** Intelligently fetches and combines article metadata (Title, Author, Year) from a prioritized list of **10 sources**:
-  - Crossref
-  - Unpaywall
-  - CORE
-  - PubMed Central (PMC)
-  - Directory of Open Access Journals (DOAJ)
-  - Zenodo
-  - Open Science Framework (OSF)
-  - arXiv
-  - OpenAlex
-  - Semantic Scholar
-- **Parallel Metadata Fetching:** Concurrently queries multiple metadata sources to find the best available metadata and PDF links faster.
-- **Smart Download Pipeline:** If metadata is found, it attempts to download the PDF from a separate, prioritized pipeline of OA sources.
-- **Parallel Downloads:** Utilizes multi-threading to download multiple PDFs simultaneously, significantly speeding up the process.
-- **Standardized Naming:** Automatically generates clean, APA 7th-style filenames:
-  `Author et al., Year - Title - DOI.pdf`
-- **Standalone Executable:** Comes with a professional build script (`build_exe.py`) to compile the entire application into a single, distributable `.exe` file for Windows, complete with an icon, version info, and optional code signing.
+> **Development Status**: This application is currently under active development and is not yet production-ready. The system's behavior may be unstable or incomplete, and users may encounter unexpected errors or bugs during operation.
 
 ---
 
-## 🚀 Installation
+## ✨ Key Features
 
-To get started, clone the repository and install the required Python packages.
+- **Modern Desktop GUI** — A sleek, dark-mode interface with a split-pane layout (data grid + paper preview panel), interactive breadcrumb navigation, multiple theme options, and real-time download progress tracking.
+- **Literature Snowballing** — Fetch and navigate through a paper's references (backward snowballing) and citations (forward snowballing) to discover related literature across generations via the OpenAlex API.
+- **Parallel Metadata Retrieval** — Concurrent goroutine pipeline that queries Crossref, Unpaywall, OpenAlex, and Semantic Scholar simultaneously, merging the best metadata from each source.
+- **Multi-Source PDF Downloads** — Resolves open-access PDF URLs from metadata providers, with an optional institutional EZProxy fallback channel for paywalled content your university has licensed.
+- **Selective & Batch Downloading** — Use grid checkboxes to select specific papers for batch download (with configurable concurrency), or download individual PDFs from the preview panel.
+- **Broad File Import** — Extracts DOIs from BibTeX (`.bib`), RIS (`.ris`), EndNote XML (`.xml`), Zotero JSON (`.json`), and plain text (`.txt`, `.csv`) files with automatic format detection.
+- **Citation Export** — Generate formatted citations in APA 7th, MLA, Chicago, Harvard, IEEE, and Vancouver styles, or export as BibTeX / RIS. Export the entire workspace as a single BibTeX file.
+- **Standalone Binary** — Compiles to a single-file executable (~15 MB) with no external runtime dependencies.
 
-1. **Clone the repository:**
+---
 
-    ```bash
-    git clone https://github.com/dmcalungsod/LitNexus.git
-    cd LitNexus
-    ```
+## 🚀 Installation & Building
 
-2. **Create a virtual environment (recommended):**
+### Prerequisites
 
-    ```bash
-    python -m venv venv
-    ```
+| Tool | Minimum Version | Check |
+|------|----------------|-------|
+| **Go** | 1.26+ | `go version` |
+| **Node.js** | 18+ | `node -v` |
+| **npm** | 9+ | `npm -v` |
+| **Wails CLI** | v2 | `wails version` |
 
-    Activate it:
+Install the Wails CLI if you don't have it:
 
-    - On Windows: `.\venv\Scripts\activate`
-    - On macOS/Linux: `source venv/bin/activate`
+```bash
+go install github.com/wailsapp/wails/v2/cmd/wails@latest
+```
 
-3. **Install dependencies:**
-    A `requirements.txt` file is included.
+### Clone & Build
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+```bash
+git clone https://github.com/dmcalungsod/LitNexus.git
+cd LitNexus
+wails build
+```
 
-    _(The file includes: `rich`, `requests`, `bibtexparser`, `rispy`, `beautifulsoup4`, `defusedxml`)_
+The compiled executable will be output to `build/bin/LitNexus.exe`.
+
+### Development Mode
+
+For hot-reloading during development:
+
+```bash
+wails dev
+```
+
+This starts the Go backend and Vite dev server simultaneously with live-reload for frontend changes.
 
 ---
 
 ## 💻 Usage
 
-Run the GUI application from the project's root directory:
+### Running
+
+Launch the built executable directly:
 
 ```bash
-python -m src.downloader.gui
+.\build\bin\LitNexus.exe
 ```
 
-Or use the standalone executable (after building):
-
-```bash
-.\dist\"LitNexus.exe"
-```
+Or use development mode (`wails dev`) for a live-reloading environment.
 
 ### Step-by-Step Workflow
 
-1. **Configure (⚙ Settings):** Start by entering your email address for Unpaywall and selecting your output directory.
-2. **Add a Seed Paper:** Click **"＋ Add DOI"** in the root workspace to manually add a starting paper. The app will resolve its metadata instantly.
-3. **Explore the Graph:** Select the paper and look at the right-side preview panel. Click **"Fetch"** under References or Citations to discover related literature.
-4. **Navigate:** Click **"View"** to see the newly discovered Generation 1 papers in the grid. Use the breadcrumbs (`< Back`) to traverse up and down your discovery tree.
-5. **Filter & Select:** Use the search bar and generation/status filters to organize the view. Use the checkboxes (`✓`) to select the papers you want to read.
-6. **Download PDFs:** Click **"↓ Download Selected"** to fetch the OA PDFs in the background. Or, click the large **"↓ Download PDF"** hero button on any single paper's preview.
-7. **Read:** Once downloaded, click **"Open PDF"** from the preview panel to view it instantly.
+1. **Configure (⚙ Settings):** Click the settings icon to enter your institutional email address (used for Unpaywall / Crossref APIs), optionally configure an EZProxy gateway prefix, and set your PDF output directory.
+2. **Add a Seed Paper:** Click **"＋ Add DOI"** in the root workspace to manually add a starting paper by DOI. Metadata is resolved automatically from multiple sources in parallel.
+3. **Import Citation Files:** Use **"Import File"** to bulk-import DOIs from `.bib`, `.ris`, `.xml`, `.json`, `.txt`, or `.csv` files.
+4. **Explore via Snowballing:** Select a paper and use the preview panel to **"Fetch"** its references (backward) or citations (forward) to discover related literature across generations.
+5. **Navigate Generations:** Use breadcrumb navigation to traverse the discovery tree. Click **"View"** to see discovered papers in the grid, and **"‹ Back"** to return to the parent.
+6. **Filter & Select:** Use the search bar and status/generation filters to organize the grid view. Use checkboxes to select papers for batch operations.
+7. **Download PDFs:** Click **"↓ Download Selected"** for batch downloads with real-time progress, or use the **"↓ Download PDF"** button on any individual paper's preview panel.
+8. **Read & Cite:** Click **"Open PDF"** from the preview panel to open downloaded files. Use the citation tools to generate formatted references in your preferred style.
 
 ---
 
-## 📦 Building the Executable
+## 🏗️ Architecture
 
-You can compile the entire project into a single `.exe` file using the included build script.
+LitNexus is a [Wails v2](https://wails.io/) application with a Go backend and a React/TypeScript frontend.
 
-1. **Install PyInstaller:**
+```
+                    ┌─────────────────────────────────────────┐
+                    │           Wails v2 Runtime              │
+                    │  (WebView2 on Windows, WebKit on macOS) │
+                    └─────────┬───────────────┬───────────────┘
+                              │               │
+                    ┌─────────▼───────┐ ┌─────▼───────────────┐
+                    │   Go Backend    │ │  React Frontend     │
+                    │                 │ │  (TypeScript + TSX) │
+                    │  ┌────────────┐ │ │  ┌────────────────┐ │
+                    │  │ app.go     │◄├─┤─►│ App.tsx        │ │
+                    │  │ (Wails    │ │ │  │ (Single-page   │ │
+                    │  │  bindings)│ │ │  │  application)  │ │
+                    │  └─────┬─────┘ │ │  └────────────────┘ │
+                    │        │       │ │  Tailwind CSS        │
+                    │  ┌─────▼─────┐ │ │  Lucide Icons        │
+                    │  │ internal/ │ │ │  Vite Build          │
+                    │  └───────────┘ │ └──────────────────────┘
+                    └────────────────┘
+```
 
-    ```bash
-    pip install pyinstaller
-    ```
+### Go Backend (`internal/`)
 
-2. **Run the build script:**
+| Package | Description |
+|---------|-------------|
+| `config` | API endpoint URLs and constants (Crossref, Unpaywall, OpenAlex, Semantic Scholar, arXiv, PubMed, DOAJ, Zenodo, OSF, CORE). |
+| `database` | SQLite workspace persistence via `modernc.org/sqlite` (pure-Go, no CGO). Stores papers, citation edges, discovery provenance, and sessions. |
+| `domain` | Core data models — `Paper`, `Edge`, `PaperDiscovery`, `DownloadResult`, `Metadata`. |
+| `downloader` | PDF download engine with parallel metadata resolution, file validation (PDF header + size checks), APA-style filename generation, and institutional proxy fallback. |
+| `metadata` | Pluggable `Source` interface with four concurrent implementations (Crossref, Unpaywall, OpenAlex, Semantic Scholar). The `Fetcher` merges results with enrichment and early-return on high-confidence sources. |
+| `parsers` | DOI extraction from BibTeX, RIS, EndNote XML, Zotero JSON, and plain text with format auto-detection. |
+| `settings` | JSON-based application settings persistence (`~/.litnexus/settings.json`). |
+| `snowball` | Literature snowballing engine using the OpenAlex API — resolves referenced works (backward) and citing works (forward) in batches of 50. |
+| `utils` | DOI cleaning/validation, safe filename generation, APA author formatting, multi-style citation generation (APA, MLA, Chicago, Harvard, IEEE, Vancouver, BibTeX, RIS). |
 
-    ```bash
-    python build_exe.py
-    ```
+### Frontend (`frontend/`)
 
-The script will automatically clean previous artifacts, build the executable, and place the final `LitNexus.exe` file inside the `dist` folder.
+| Technology | Role |
+|-----------|------|
+| **React 18** | UI framework |
+| **TypeScript** | Type-safe component logic |
+| **Tailwind CSS 3** | Utility-first styling |
+| **Vite** | Build tooling and dev server |
+| **Lucide React** | Icon library |
+| **Wails JS Runtime** | Go ↔ JS bridge and event system |
 
-### Code Signing (Optional)
+---
 
-The build script includes a feature to digitally sign the executable. To use it:
+## 📂 Project Structure
 
-- Place your `.pfx` code signing certificate anywhere in the project directory.
-- The script will automatically find it and prompt you for the password during the build process.
+```text
+LitNexus/
+│
+├── main.go                        # Wails application entry point
+├── app.go                         # App struct — exposes Go methods to frontend via Wails bindings
+│
+├── internal/
+│   ├── config/
+│   │   └── config.go              # API endpoint URLs and constants
+│   ├── database/
+│   │   └── db.go                  # SQLite database manager (papers, edges, discoveries, sessions)
+│   ├── domain/
+│   │   └── paper.go               # Core data models (Paper, Edge, Metadata, DownloadResult)
+│   ├── downloader/
+│   │   └── downloader.go          # PDF download engine with proxy fallback and file validation
+│   ├── metadata/
+│   │   ├── source.go              # Source interface and shared HTTP client
+│   │   ├── fetcher.go             # Parallel metadata fetcher with enrichment
+│   │   ├── crossref.go            # Crossref API source
+│   │   ├── unpaywall.go           # Unpaywall API source
+│   │   ├── openalex.go            # OpenAlex API source
+│   │   └── semanticscholar.go     # Semantic Scholar API source
+│   ├── parsers/
+│   │   └── parsers.go             # DOI extraction from citation files (.bib, .ris, .xml, .json, .txt, .csv)
+│   ├── settings/
+│   │   └── settings.go            # Settings manager with JSON persistence (~/.litnexus/)
+│   ├── snowball/
+│   │   └── engine.go              # Literature snowballing engine (references + citations via OpenAlex)
+│   └── utils/
+│       ├── utils.go               # DOI cleaning, safe filenames, citation formatting
+│       └── utils_test.go          # Unit tests for utility functions
+│
+├── frontend/
+│   ├── src/
+│   │   ├── main.tsx               # React entry point
+│   │   ├── App.tsx                # Main single-page application component
+│   │   └── index.css              # Global styles
+│   ├── index.html                 # HTML shell
+│   ├── package.json               # npm dependencies (React, Lucide, Tailwind CSS, Vite)
+│   ├── tsconfig.json              # TypeScript configuration
+│   ├── vite.config.ts             # Vite build configuration
+│   ├── tailwind.config.js         # Tailwind CSS configuration
+│   ├── postcss.config.js          # PostCSS configuration
+│   └── wailsjs/                   # Auto-generated Wails JS/TS bindings
+│
+├── assets/
+│   └── favicon.ico                # Application icon
+│
+├── build/                         # (GitIgnored) Compiled executables
+├── logs/                          # (GitIgnored) Application logs
+│
+├── go.mod                         # Go module definition
+├── go.sum                         # Go dependency checksums
+├── wails.json                     # Wails project configuration
+├── config.ini                     # Runtime mode configuration
+├── version_info.txt               # Windows executable version metadata
+│
+├── .pre-commit-config.yaml        # Pre-commit hooks (Ruff, mypy — legacy)
+├── .gitignore
+├── LICENSE.txt                    # MIT License
+└── README.md                      # This file
+```
 
 ---
 
@@ -134,14 +215,16 @@ The build script includes a feature to digitally sign the executable. To use it:
 
 ### Security
 
-- **Antivirus:** This application writes `.pdf` files from the internet to your disk. While the tool only downloads from public academic repositories, all users should run active antivirus software (e.g., Windows Defender) that provides real-time scanning of all new files.
-- **SSL Verification:** By default, this tool verifies SSL certificates. You can disable this in the settings (option `Bypass SSL verification?`), but it is **not recommended** as it makes you vulnerable to man-in-the-middle (MITM) attacks. Only use this if you are behind a corporate firewall that uses self-signed certificates.
+- **Antivirus:** This application downloads `.pdf` files from the internet to your disk. While the tool only accesses public academic repositories, all users should run active antivirus software with real-time scanning enabled.
+- **PDF Validation:** Downloaded files are validated against both a minimum file size threshold (5 KB) and the PDF binary header (`%PDF-`) before being written to disk.
+- **SSL Verification:** All HTTP connections use standard TLS/SSL verification.
 
 ### Limitations
 
-- **Open Access Only:** This tool is **NOT** a "piracy" tool and **cannot** bypass paywalls. It _only_ searches for legally-hosted, open-access (OA) versions of articles. If a PDF is not available from one of the 10+ OA sources, the download for that DOI will fail.
-- **API Rate Limits:** The tool is designed to be a "polite" client, but some APIs (like Unpaywall and Crossref) have rate limits. If you are processing thousands of DOIs, you may be temporarily rate-limited.
-- **Metadata Quality:** The filename `Author et al., Year - Title - DOI.pdf` is 100% dependent on the metadata returned by the APIs. If an API provides incomplete data, the filename will reflect that (e.g., `Unknown Author, 2024 - Title - DOI.pdf`).
+- **Open Access Only:** This tool **cannot** bypass paywalls. It only searches for legally-hosted, open-access versions of articles. If a PDF is not available from any OA source, the download for that DOI will fail. An optional institutional EZProxy gateway can be configured for content your institution has licensed.
+- **API Rate Limits:** The tool is designed to be a polite client, but APIs like Unpaywall and Crossref have rate limits. Processing large batches of DOIs may result in temporary throttling.
+- **Metadata Quality:** Filenames follow the pattern `Author et al., Year - Title - DOI.pdf` and depend entirely on the metadata returned by upstream APIs. Incomplete metadata will produce partial filenames.
+- **Snowballing Depth:** The snowballing engine currently fetches up to 50 papers per batch from OpenAlex.
 
 ### Legal, Terms of Service, and Acknowledgments
 
@@ -152,97 +235,17 @@ This tool is an API client. As a user, you are responsible for abiding by the te
 - **Compliance:** You, the user, are solely responsible for your use of this Software. You must ensure that your actions comply with all applicable copyright laws, institutional policies, and the terms of service of any third-party APIs used by this Software.
 - **No Guarantee:** The Software provides no guarantee that the content it retrieves is, in fact, open-access. The Author is not responsible for any content downloaded by the user in violation of any laws or agreements.
 
+### Open Data Services
+
 This project gratefully acknowledges the following open data services:
 
-- **Crossref:** [https://www.crossref.org/services/metadata-retrieval/](https://www.crossref.org/services/metadata-retrieval/)
-- **Unpaywall:** [https://unpaywall.org/products/api](https://unpaywall.org/products/api)
-- **OpenAlex:** Please cite their paper:
-  > Priem, J., Piwowar, H., & Orr, R. (2022). _OpenAlex: A fully-open index of scholarly works, authors, venues, institutions, and concepts._ arXiv. [https://arxiv.org/abs/2205.01833](https://arxiv.org/abs/2205.01833)
-- **CORE:** Please cite their paper:
-  > Knoth, P. and Zdrahal, Z. (2012) _CORE: Three Access Levels to Underpin Open Access._ D-Lib Magazine, 18(11/12). [http://www.dlib.org/dlib/november12/knoth/11knoth.html](http://www.dlib.org/dlib/november12/knoth/11knoth.html)
-- **Semantic Scholar:** This tool uses the Semantic Scholar API in accordance with its license. [https://www.semanticscholar.org/product/api](https://www.semanticscholar.org/product/api)
-- **arXiv:** [https://arxiv.org/](https://arxiv.org/)
-- **PubMed Central (PMC):** [https://www.ncbi.nlm.nih.gov/pmc/](https://www.ncbi.nlm.nih.gov/pmc/)
-- **Directory of Open Access Journals (DOAJ):** [https://doaj.org/](https://doaj.org/)
-- **Zenodo:** [https://zenodo.org/](https://zenodo.org/)
-- **Open Science Framework (OSF):** [https://osf.io/](https://osf.io/)
+- **[Crossref](https://www.crossref.org/services/metadata-retrieval/)** — Scholarly metadata and DOI registration.
+- **[Unpaywall](https://unpaywall.org/products/api)** — Open-access article discovery.
+- **[OpenAlex](https://openalex.org/)** — Open scholarly metadata index.
+  > Priem, J., Piwowar, H., & Orr, R. (2022). *OpenAlex: A fully-open index of scholarly works, authors, venues, institutions, and concepts.* arXiv. [https://arxiv.org/abs/2205.01833](https://arxiv.org/abs/2205.01833)
+- **[Semantic Scholar](https://www.semanticscholar.org/product/api)** — AI-powered research discovery.
 
 ---
-
-## 📂 Project Structure
-
-This project has been refactored for clarity and maintainability.
-
-```text
-LitNexus/
-│
-├── src/
-│   └── downloader/
-│       ├── __init__.py
-│       ├── config.py              # API endpoints and constants
-│       ├── core.py                # The main Downloader orchestration class
-│       ├── download_executor.py   # Executes individual file downloads
-│       ├── download_manager.py    # Threaded download manager
-│       ├── download_pipeline.py   # Multi-source download pipeline
-│       ├── exceptions.py
-│       ├── filename_generator.py  # APA-style filename builder
-│       ├── metadata_fetcher.py    # Parallel metadata retrieval
-│       ├── parsers.py             # DOI extraction from .bib, .ris, etc.
-│       ├── protocol.py            # Protocol definitions
-│       ├── settings.py            # Settings models
-│       ├── settings_manager.py    # Settings persistence
-│       ├── source_manager.py      # Manages source prioritization
-│       ├── sources/               # Metadata and download sources
-│       │   ├── __init__.py
-│       │   ├── base.py            # Abstract Base Source class
-│       │   ├── arxiv_source.py
-│       │   ├── core_api_source.py
-│       │   ├── crossref_source.py
-│       │   ├── doaj_source.py
-│       │   ├── doi_resolver_source.py
-│       │   ├── openalex_source.py
-│       │   ├── osf_source.py
-│       │   ├── pmc_source.py
-│       │   ├── semantic_scholar_source.py
-│       │   ├── unpaywall_source.py
-│       │   └── zenodo_source.py
-│       ├── gui/                   # PySide6 GUI package
-│       │   ├── __init__.py
-│       │   ├── __main__.py             # Makes the GUI runnable
-│       │   ├── main_window.py          # Main application layout and controller
-│       │   ├── workspace_widget.py     # Data grid and central workspace UI
-│       │   ├── paper_preview_widget.py # Right-side paper details and actions
-│       │   ├── paper_details_dialog.py # Pop-up dialog for extended paper info
-│       │   ├── settings_widget.py      # App configuration panel
-│       │   └── status_widget.py        # Progress, logs, and activity overlay
-│       ├── types.py               # Type definitions
-│       └── utils.py               # Filename sanitizers and author formatters
-│
-├── tests/
-│   ├── conftest.py
-│   ├── test_core.py
-│   ├── test_download_manager.py
-│   ├── test_gui.py
-│   └── test_parsers.py
-│
-├── assets/
-│   └── favicon.ico
-│
-├── data/                          # (GitIgnored) Saved settings
-├── downloads/                     # (GitIgnored) Default PDF output folder
-├── output/                        # (GitIgnored) Failed DOI lists
-│
-├── run.py                         # Simple entry script
-├── build_exe.py                   # PyInstaller build script
-├── requirements.txt
-├── pyproject.toml                 # Ruff and mypy configuration
-├── .pre-commit-config.yaml
-│
-├── README.md                      # This file
-├── LICENSE.txt                    # MIT License for the project
-│
-└── .gitignore
-```
 
 ## ✨ Attributions
 
@@ -252,4 +255,4 @@ The application icon (`favicon.ico`) was downloaded from [Magnific](https://magn
 
 ## 📜 License
 
-This entire project—both its source code and the distributed executable—is licensed under the **MIT License**. See the `LICENSE.txt` file for details.
+This entire project — both its source code and the distributed executable — is licensed under the **MIT License**. See the [LICENSE.txt](LICENSE.txt) file for details.

@@ -1,0 +1,13 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "LitNexus",
+  "outputfilename": "LitNexus",
+  "frontend:install": "npm install",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:discovery": "html",
+  "author": {
+    "name": "LitNexus Contributors",
+    "email": "dev@litnexus.org"
+  }
+}
